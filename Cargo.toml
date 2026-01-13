@@ -21,3 +21,11 @@ thiserror = "2.0.12"
 
 [lib]
 doctest = false
+
+[[bench]]
+name = "template_bench"
+path = "benchmarks/template_bench.rs"
+harness = false
+
+[dev-dependencies]
+criterion = "0.8.1"

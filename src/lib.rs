@@ -331,7 +331,7 @@ impl<const O: char, const C: char> Template<O, C> {
     /// Function to convert a section between delimiters
     /// into a vector of token, which will be passed into
     /// the parse trait function so that the user can customize the logic
-    fn tokenize(input: &str) -> Vec<Token> {
+    pub fn tokenize(input: &str) -> Vec<Token> {
         let mut tokens = Vec::new();
         let mut chars = input.chars().peekable();
         // Keeps track of the current string literal
