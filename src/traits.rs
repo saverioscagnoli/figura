@@ -4,7 +4,8 @@ pub trait ToAstring {
 
 impl ToAstring for i64 {
     fn to_astring(self) -> String {
-        itoa::Buffer::new().format(self).to_owned()
+        self.format_into(&mut core::fmt::NumBuffer::new())
+            .to_owned()
     }
 }
 

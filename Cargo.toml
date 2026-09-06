@@ -11,16 +11,22 @@ license = "MIT"
 readme = "README.md"
 keywords = ["string", "format", "template"]
 
-exclude = [".gitignore", "docs", "benchmarks", "examples", "tests", "CHANGELOG.md"]
+exclude = [
+    ".gitignore",
+    "docs",
+    "benchmarks",
+    "examples",
+    "tests",
+    "CHANGELOG.md",
+]
 
 
 [lib]
 doctest = false
 
 [dependencies]
-itoa = "1.0.18"
-thiserror = "2.0.18"
-zmij = "1.0.21"
+thiserror = "2.0.20"
+zmij = "1.0.23"
 
 
 [dev-dependencies]
