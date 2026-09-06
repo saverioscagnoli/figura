@@ -1,6 +1,6 @@
 [package]
 name = "figura"
-version = "3.0.0"
+version = "3.1.0"
 edition = "2024"
 authors = ["Saverio Scagnoli <svscagn@gmail.com>"]
 description = "A flexible string template formatting crate"
@@ -20,14 +20,12 @@ exclude = [
     "CHANGELOG.md",
 ]
 
-
 [lib]
 doctest = false
 
 [dependencies]
 thiserror = "2.0.20"
 zmij = "1.0.23"
-
 
 [dev-dependencies]
 criterion = "0.8.2"

@@ -1,6 +1,8 @@
-# Figura - Lightweight Template Engine for Rust
+<div align="center">
 
-```
+<h1>figura</h1>
+
+<pre>
 .---------------.
 | J             |
 |   .      //// |
@@ -10,222 +12,55 @@
 |         /   \ |
 |        |     ||
 '---------------'
-```
+</pre>
 
-## Features
+[![crates.io](https://img.shields.io/crates/v/figura.svg?style=flat-square)](https://crates.io/crates/figura)
+[![docs.rs](https://img.shields.io/docsrs/figura?style=flat-square)](https://docs.rs/figura)
+[![downloads](https://img.shields.io/crates/d/figura.svg?style=flat-square)](https://crates.io/crates/figura)
+[![license](https://img.shields.io/crates/l/figura.svg?style=flat-square)](LICENSE)
 
-- **Variable Substitution** - Replace placeholders with context values
-- **Pattern Repetition** - Repeat strings a specified number of times
-- **Conditionals** - Ternary operators with comparison support
-- **Custom Delimiters** - Use any characters as template boundaries
-- **Extensible Parsers** - Implement custom parsing logic
-- **Zero-Copy** - Efficient string handling with `Cow`
-- **Escape Sequences** - Support for literal delimiter characters
+<p>A small template engine for Rust. Compile a string once, format it with a context as many times as you want.</p>
 
-## Installation
+<code>figura = "3.1.0"</code>
 
-Add this to your `Cargo.toml`:
+</div>
 
-```toml
-[dependencies]
-figura = "2.0.3"
-```
-
-## Quick Start
+## Usage
 
 ```rust
-use figura::{Template, DefaultParser, Context, Value};
-use std::collections::HashMap;
+use figura::{Context, Template, Value};
 
 let mut ctx = Context::new();
 ctx.insert("name", Value::static_str("Alice"));
 ctx.insert("count", Value::Int(3));
 
-let template = Template::<'{', '}'>::compile(
-    "Hello {name}! Stars: {'★':count}"
-).unwrap();
+let template = Template::<'{', '}'>::compile("Hello {name}! Stars: {'*':count}").unwrap();
 
-let output = template.format(&ctx).unwrap();
-assert_eq!(output, "Hello Alice! Stars: ★★★");
+assert_eq!(template.format(&ctx).unwrap(), "Hello Alice! Stars: ***");
 ```
+
+Delimiters are const generic params, so pick whatever you like: `Template::<'<', '>'>`, `Template::<'[', ']'>`, or `Template::<'%', '%'>` with the same char on both sides.
 
 ## Syntax
 
-### Variable Substitution
+| What | Example | Result |
+| --- | --- | --- |
+| Variable | `{name}` | the value from the context |
+| Literal | `{'hi'}` | `hi` |
+| Repeat | `{'-':50}` | 50 dashes |
+| Ternary | `{active ? 'on' : 'off'}` | one of the two branches |
+| Comparison | `{age >= 18 ? 'yes' : 'no'}` | `==`, `!=`, `>`, `<`, `>=`, `<=` |
+| Negation | `{!enabled ? 'no' : 'yes'}` | flips the condition |
+| Escape | `{{literal}}` | `{literal}` |
 
-```rust
-let template = Template::<'{', '}'>::compile(
-    "User: {username}, Age: {age}"
-).unwrap();
+Values are `Value::static_str`, `Value::owned_str`, `Value::Int`, `Value::Float` and `Value::Bool`. A `Context` is just a `HashMap<&'static str, Value>`.
 
-ctx.insert("username", Value::static_str("Bob"));
-ctx.insert("age", Value::Int(25));
-// Output: "User: Bob, Age: 25"
-```
+## Custom parsers
 
-### Literals
+Implement `Parser` to turn tokens into your own `Directive`, then `Template::<'{', '}'>::compile_with_parser::<MathParser>("{x + y}")`. There's a working one in `examples/custom_parser.rs`.
 
-```rust
-let template = Template::<'{', '}'>::compile(
-    "Message: {'Hello World'}"
-).unwrap();
-// Output: "Message: Hello World"
-```
-
-### Pattern Repetition
-
-```rust
-let template = Template::<'{', '}'>::compile(
-    "{'-':50}\n{title}\n{'-':50}"
-).unwrap();
-
-ctx.insert("title", Value::static_str("HEADER"));
-// Output:
-// --------------------------------------------------
-// HEADER
-// --------------------------------------------------
-```
-
-### Conditionals
-
-Simple boolean conditions:
-
-```rust
-let template = Template::<'{', '}'>::compile(
-    "Status: {active ? 'Online' : 'Offline'}"
-).unwrap();
-
-ctx.insert("active", Value::Bool(true));
-// Output: "Status: Online"
-```
-
-With comparisons:
-
-```rust
-let template = Template::<'{', '}'>::compile(
-    "Access: {age >= 18 ? 'Granted' : 'Denied'}"
-).unwrap();
-
-ctx.insert("age", Value::Int(21));
-// Output: "Access: Granted"
-```
-
-Supported operators: `==`, `!=`, `>`, `<`, `>=`, `<=`
-
-Logical NOT:
-
-```rust
-let template = Template::<'{', '}'>::compile(
-    "{!enabled ? 'Disabled' : 'Enabled'}"
-).unwrap();
-```
-
-### Escaped Delimiters
-
-```rust
-let template = Template::<'{', '}'>::compile(
-    "Literal braces: {{not a variable}}"
-).unwrap();
-// Output: "Literal braces: {not a variable}"
-```
-
-## Custom Delimiters
-
-Use any characters as delimiters:
-
-```rust
-// Angle brackets
-let template = Template::<'<', '>'>::compile(
-    "Hello <name>!"
-).unwrap();
-
-// Square brackets
-let template = Template::<'[', ']'>::compile(
-    "Value: [count]"
-).unwrap();
-
-// Same character for both
-let template = Template::<'%', '%'>::compile(
-    "Data: %value%"
-).unwrap();
-```
-
-## Value Types
-
-Figura supports four value types:
-
-```rust
-// String (zero-copy when possible)
-ctx.insert("name", Value::static_str("Alice"));
-ctx.insert("name", Value::owned_str(String::from("Bob")));
-
-// Integer
-ctx.insert("count", Value::Int(42));
-
-// Float
-ctx.insert("score", Value::Float(95.5));
-
-// Boolean
-ctx.insert("active", Value::Bool(true));
-```
-
-## Custom Parsers
-
-Implement the `Parser` trait to create custom parsing logic:
-
-```rust
-use figura::{Parser, Token, Directive, Argument};
-
-struct MathParser;
-
-impl Parser for MathParser {
-    fn parse(tokens: &[Token]) -> Option<Box<dyn Directive>> {
-        match tokens {
-            [Token::Ident(left), Token::Plus, Token::Ident(right)] => {
-                Some(Box::new(AddDirective {
-                    left: left.to_string(),
-                    right: right.to_string(),
-                }))
-            }
-            _ => Some(Box::new(EmptyDirective)),
-        }
-    }
-}
-
-// Implement custom directive
-struct AddDirective {
-    left: String,
-    right: String,
-}
-
-impl Directive for AddDirective {
-    fn exec(&self, ctx: &Context) -> Result<Cow<'static, str>, DirectiveError> {
-        // Custom execution logic
-    }
-}
-
-// Use custom parser
-let template = Template::<'{', '}'>::compile_with_parser::<MathParser>(
-    "{x + y}"
-).unwrap();
-```
-
-## API Overview
-
-### Core Types
-
-- `Template<O, C>` - Compiled template with open/close delimiters
-- `Value` - Runtime values (String, Int, Float, Bool)
-- `Context` - HashMap of variable names to values
-- `DefaultParser` - Built-in parser implementation
-- `Parser` - Trait for custom parsers
-- `Directive` - Trait for executable template components
-
+Other examples: `cargo run --example basic`, `table`, `report`.
 
 ## License
 
-MIT License - Copyright (c) Saverio Scagnoli
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+MIT
