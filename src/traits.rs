@@ -11,6 +11,10 @@ impl ToAstring for i64 {
 
 impl ToAstring for f64 {
     fn to_astring(self) -> String {
-        zmij::Buffer::new().format(self).to_owned()
+        #[cfg(feature = "zmij")]
+        return zmij::Buffer::new().format(self).to_owned();
+
+        #[cfg(not(feature = "zmij"))]
+        self.to_string()
     }
 }

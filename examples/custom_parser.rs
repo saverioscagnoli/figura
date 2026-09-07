@@ -1,8 +1,14 @@
 use std::borrow::Cow;
 
-use figura::{
-    Argument, Context, Directive, EmptyDirective, Parser, ReplaceDirective, Template, Token, Value,
-};
+use figura::Argument;
+use figura::Context;
+use figura::Directive;
+use figura::EmptyDirective;
+use figura::Parser;
+use figura::ReplaceDirective;
+use figura::Template;
+use figura::Token;
+use figura::Value;
 
 struct MathParser;
 
@@ -217,7 +223,7 @@ impl Directive for AddLiteralDirective {
 }
 
 fn main() {
-    let mut ctx = Context::new();
+    let mut ctx = Context::default();
     ctx.insert("x", Value::Int(10));
     ctx.insert("y", Value::Int(5));
     ctx.insert("a", Value::Int(100));

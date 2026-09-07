@@ -1,7 +1,8 @@
+use std::borrow::Cow;
+
 use crate::Context;
 use crate::arg::Argument;
 use crate::err::DirectiveError;
-use std::borrow::Cow;
 
 /// A template directive that can be executed to produce output.
 ///

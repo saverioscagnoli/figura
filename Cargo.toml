@@ -1,6 +1,6 @@
 [package]
 name = "figura"
-version = "3.1.0"
+version = "3.2.0"
 edition = "2024"
 authors = ["Saverio Scagnoli <svscagn@gmail.com>"]
 description = "A flexible string template formatting crate"
@@ -24,7 +24,13 @@ exclude = [
 doctest = false
 
 [dependencies]
-zmij = "1.0.23"
+foldhash = { version = "0.2.0", optional = true }
+zmij = { version = "1.0.23", optional = true }
+
+[features]
+default = []
+foldhash = ["dep:foldhash"]
+zmij = ["dep:zmij"]
 
 [dev-dependencies]
 criterion = "0.8.2"

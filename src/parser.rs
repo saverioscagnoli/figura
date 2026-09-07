@@ -6,13 +6,14 @@
 
 use std::borrow::Cow;
 
-use crate::{
-    arg::{Argument, ComparisonOp},
-    directive::{
-        ConditionalDirective, Directive, EmptyDirective, RepeatDirective, ReplaceDirective,
-    },
-    lexer::Token,
-};
+use crate::arg::Argument;
+use crate::arg::ComparisonOp;
+use crate::directive::ConditionalDirective;
+use crate::directive::Directive;
+use crate::directive::EmptyDirective;
+use crate::directive::RepeatDirective;
+use crate::directive::ReplaceDirective;
+use crate::lexer::Token;
 
 /// A parser that converts token sequences into executable directives.
 ///

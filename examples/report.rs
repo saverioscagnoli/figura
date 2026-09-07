@@ -1,7 +1,9 @@
-use figura::{Context, Template, Value};
+use figura::Context;
+use figura::Template;
+use figura::Value;
 
 fn main() {
-    let mut ctx = Context::new();
+    let mut ctx = Context::default();
 
     ctx.insert("company", Value::static_str("Acme Corp"));
     ctx.insert("quarter", Value::static_str("Q4 2024"));
