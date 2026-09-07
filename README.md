@@ -21,7 +21,7 @@
 
 <p>A small template engine for Rust. Compile a string once, format it with a context as many times as you want.</p>
 
-<code>figura = "3.1.0"</code>
+<code>figura = "3.2.0"</code>
 
 </div>
 
