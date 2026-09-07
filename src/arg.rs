@@ -1,5 +1,9 @@
-use crate::{Context, Value, err::DirectiveError, traits::ToAstring};
 use std::borrow::Cow;
+
+use crate::Context;
+use crate::Value;
+use crate::err::DirectiveError;
+use crate::traits::ToAstring;
 
 /// An argument that can be resolved to a value at runtime.
 ///

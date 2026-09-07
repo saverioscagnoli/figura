@@ -46,12 +46,9 @@ mod lexer;
 mod parser;
 mod traits;
 
-use std::{
-    borrow::Cow,
-    cell::RefCell,
-    collections::HashMap,
-    fmt::{self},
-};
+use std::borrow::Cow;
+use std::cell::RefCell;
+use std::fmt::{self};
 
 pub use arg::*;
 pub use directive::*;
@@ -126,7 +123,12 @@ impl Value {
 /// ctx.insert("user", Value::static_str("Alice"));
 /// ctx.insert("age", Value::Int(30));
 /// ```
-pub type Context = HashMap<&'static str, Value>;
+
+#[cfg(feature = "foldhash")]
+pub type Context = foldhash::HashMap<&'static str, Value>;
+
+#[cfg(not(feature = "foldhash"))]
+pub type Context = std::collections::HashMap<&'static str, Value>;
 
 /// A compiled template ready for rendering.
 ///

@@ -3,7 +3,8 @@
 //! This module defines the errors that can occur during template rendering,
 //! particularly when resolving arguments and executing directives.
 
-use thiserror::Error;
+use std::error::Error;
+use std::fmt;
 
 /// Errors that can occur during directive execution.
 ///
@@ -28,7 +29,6 @@ use thiserror::Error;
 /// }
 /// ```
 #[derive(Debug)]
-#[derive(Error)]
 pub enum DirectiveError {
     /// A variable was not found in the template context.
     ///
@@ -48,12 +48,10 @@ pub enum DirectiveError {
     /// Context: (empty)
     /// Error: Variable 'username' was not found in the context while being used as 'string'
     /// ```
-    #[error("Variable '{name}' was not found in the context while being used as '{type_name}'")]
     NotFound {
         name: String,
         type_name: &'static str,
     },
-
     /// A variable was found but has an incompatible type.
     ///
     /// This error occurs when a variable exists in the context but cannot be
@@ -73,13 +71,11 @@ pub enum DirectiveError {
     /// Context: count = "not a number"
     /// Error: Variable 'count' has type 'string' but was expected to have type 'i64'
     /// ```
-    #[error("Variable '{name}' has type '{found}' but was expected to have type '{expected}'")]
     TypeError {
         name: String,
         expected: &'static str,
         found: String,
     },
-
     /// A literal value could not be parsed as the required type.
     ///
     /// This error occurs when a literal value embedded in the template cannot
@@ -98,7 +94,6 @@ pub enum DirectiveError {
     /// Template: "{'hello':3}"  (tries to parse "hello" as i64 for repeat count)
     /// Error: Failed to parse 'hello' as a literal of type 'i64': invalid digit found in string
     /// ```
-    #[error("Failed to parse '{value}' as a literal of type '{type_name}': {message}")]
     ParseError {
         value: String,
         type_name: &'static str,
@@ -106,11 +101,48 @@ pub enum DirectiveError {
     },
 }
 
-#[derive(Debug, Error)]
-pub enum TemplateError {
-    #[error("Unclosed delimiter '{0}'")]
-    MissingDelimiter(char),
+impl fmt::Display for DirectiveError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::NotFound { name, type_name } => write!(
+                f,
+                "Variable '{name}' was not found in the context while being used as '{type_name}'"
+            ),
+            Self::TypeError {
+                name,
+                expected,
+                found,
+            } => write!(
+                f,
+                "Variable '{name}' has type '{found}' but was expected to have type '{expected}'"
+            ),
+            Self::ParseError {
+                value,
+                type_name,
+                message,
+            } => write!(
+                f,
+                "Failed to parse '{value}' as a literal of type '{type_name}': {message}"
+            ),
+        }
+    }
+}
 
-    #[error("Failed to parse directive: {0}")]
+impl Error for DirectiveError {}
+
+#[derive(Debug)]
+pub enum TemplateError {
+    MissingDelimiter(char),
     DirectiveParsing(String),
 }
+
+impl fmt::Display for TemplateError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::MissingDelimiter(delim) => write!(f, "Unclosed delimiter '{delim}'"),
+            Self::DirectiveParsing(msg) => write!(f, "Failed to parse directive: {msg}"),
+        }
+    }
+}
+
+impl Error for TemplateError {}

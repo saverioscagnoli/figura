@@ -1,7 +1,9 @@
-use figura::{Context, Template, Value};
+use figura::Context;
+use figura::Template;
+use figura::Value;
 
 fn main() {
-    let mut ctx = Context::new();
+    let mut ctx = Context::default();
 
     ctx.insert("title", Value::static_str("User Statistics"));
     ctx.insert("col1_width", Value::Int(20));
