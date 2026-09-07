@@ -24,7 +24,6 @@ exclude = [
 doctest = false
 
 [dependencies]
-thiserror = "2.0.20"
 zmij = "1.0.23"
 
 [dev-dependencies]
