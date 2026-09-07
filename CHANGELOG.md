@@ -4,6 +4,7 @@ V3.2.0 - September 07 2026
 - Created the `foldhash` feature for a faster hashmap.
 - Created the `zmij` feature for faster string conversion, it was default before, now just uses `to_string` by default.
 - Reversed the order of the changelog because it was reversed (im dumb)
+- Removed `thiserror` dependency.
 
 V3.1.0 - September 06 2026
 - Removed `itoa`, replaced with std functions by [dheijl](https://github.com/dheijl)
